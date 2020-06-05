@@ -2,6 +2,7 @@ package finalyear.project.exceltostring
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
@@ -37,22 +38,46 @@ class MainActivity : AppCompatActivity() {
 
             val formulaEvaluator = workBook.creationHelper.createFormulaEvaluator()
 
-            for (rowIndex in 0 until rowCount-1) {
+            var hadiths = arrayListOf<String>()
+
+            for (rowIndex in 1 until rowCount-1) {
                 val row = sheet.getRow(rowIndex)
 
                 val cellsCount = row.physicalNumberOfCells
+
+                var cellValues = arrayListOf<String>()
 
                 for (cellIndex in 0 until cellsCount) {
                     val value = getCellAsString(row, cellIndex, formulaEvaluator)
 
 //                    Log.d(TAG, "Value: $value")
-                    Logger.d(value)
+//                    Logger.d(value)
+                    cellValues.add(value)
 
                 }
+
+                // Formating
+                val content = cellValues[0].trim() +
+                        "\n\nরেফারেন্সঃ\n" + cellValues[1].trim() +
+                        "\n" + cellValues[2].trim()
+
+                hadiths.add(content)
+
+                Log.d(TAG, "Hadith: $content")
+
+
             }
+
+            showHadith(hadiths[1])
         } catch (e: Exception) {
             Log.d(TAG, "error: ${e.message}")
         }
+    }
+
+    private fun showHadith(hadith: String) {
+        var hadithTextView: TextView = findViewById(R.id.hadithTextView)
+
+        hadithTextView.text = hadith
     }
 
     private fun getCellAsString(row: Row, cellIndex: Int, formulaEvaluator: FormulaEvaluator): String {
