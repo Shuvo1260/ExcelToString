@@ -52,4 +52,5 @@ dependencies {
     implementation files('libs/poi-ooxml-schemas-3.12-20150511-a.jar')
 
     implementation 'com.orhanobut:logger:2.2.0'
+    implementation 'com.loopj.android:android-async-http:1.4.10'
 }
