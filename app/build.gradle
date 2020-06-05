@@ -50,4 +50,6 @@ dependencies {
     implementation files('libs/jexcel.jar')
     implementation files('libs/poi-3.12-android-a.jar')
     implementation files('libs/poi-ooxml-schemas-3.12-20150511-a.jar')
+
+    implementation 'com.orhanobut:logger:2.2.0'
 }

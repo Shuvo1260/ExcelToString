@@ -1,14 +1,14 @@
 package finalyear.project.exceltostring
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import com.orhanobut.logger.AndroidLogAdapter
+import com.orhanobut.logger.Logger
 import org.apache.poi.ss.usermodel.FormulaEvaluator
 import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.ss.usermodel.Workbook
-import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator
-import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +18,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+        Logger.addLogAdapter(AndroidLogAdapter())
 
         readNotificationContent()
     }
@@ -43,7 +45,9 @@ class MainActivity : AppCompatActivity() {
                 for (cellIndex in 0 until cellsCount) {
                     val value = getCellAsString(row, cellIndex, formulaEvaluator)
 
-                    Log.d(TAG, "Value: $value")
+//                    Log.d(TAG, "Value: $value")
+                    Logger.d(value)
+
                 }
             }
         } catch (e: Exception) {
