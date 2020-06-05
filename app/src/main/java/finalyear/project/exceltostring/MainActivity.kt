@@ -1,7 +1,9 @@
 package finalyear.project.exceltostring
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.orhanobut.logger.AndroidLogAdapter
@@ -9,11 +11,20 @@ import com.orhanobut.logger.Logger
 import org.apache.poi.ss.usermodel.FormulaEvaluator
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import java.io.BufferedReader
+import java.io.FileOutputStream
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+import java.lang.StringBuilder
 
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
+    private val FILE_NAME = "notification_string.txt"
+    private lateinit var textView: TextView
+    private lateinit var showButton: Button
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,9 +33,20 @@ class MainActivity : AppCompatActivity() {
 
         Logger.addLogAdapter(AndroidLogAdapter())
 
+
+        textView = findViewById(R.id.hadithTextView)
+        showButton = findViewById(R.id.show)
+
+        showButton.setOnClickListener {
+            showHadith()
+        }
+
         readNotificationContent()
+
+
     }
 
+    // Reading from excel file
     private fun readNotificationContent() {
 
         try {
@@ -50,8 +72,6 @@ class MainActivity : AppCompatActivity() {
                 for (cellIndex in 0 until cellsCount) {
                     val value = getCellAsString(row, cellIndex, formulaEvaluator)
 
-//                    Log.d(TAG, "Value: $value")
-//                    Logger.d(value)
                     cellValues.add(value)
 
                 }
@@ -68,16 +88,55 @@ class MainActivity : AppCompatActivity() {
 
             }
 
-            showHadith(hadiths[1])
+//            showHadith(hadiths[1])
+
+            saveNotification(hadiths)
         } catch (e: Exception) {
             Log.d(TAG, "error: ${e.message}")
         }
     }
 
-    private fun showHadith(hadith: String) {
-        var hadithTextView: TextView = findViewById(R.id.hadithTextView)
+    // Writing into text file
+    private fun saveNotification(hadiths: ArrayList<String>) {
+        try {
 
-        hadithTextView.text = hadith
+            var fileOutputStream = OutputStreamWriter(openFileOutput(FILE_NAME, Context.MODE_PRIVATE))
+
+
+            hadiths.forEach {
+                fileOutputStream.append(it)
+                fileOutputStream.append("\n\n\n")
+            }
+            fileOutputStream.close()
+
+        } catch (e: Exception) {
+            Log.d(TAG, "FileWriteError: ${e.message}")
+        }
+    }
+
+    // Reading from text file
+    private fun showHadith() {
+        try {
+            val inputStream = openFileInput(FILE_NAME)
+
+            if (inputStream != null) {
+                val inputStreamReader = InputStreamReader(inputStream)
+                val bufferReader = BufferedReader(inputStreamReader)
+                var value = bufferReader.readLine()
+                var stringBuilder = StringBuilder()
+
+                while (value != null) {
+                    stringBuilder.append("\n").append(value)
+                    value = bufferReader.readLine()
+                }
+
+                inputStream.close()
+
+                textView.setText(stringBuilder.toString())
+            }
+        }catch (e: Exception) {
+            Log.d(TAG, "FileReadError: ${e.message}")
+        }
     }
 
     private fun getCellAsString(row: Row, cellIndex: Int, formulaEvaluator: FormulaEvaluator): String {
